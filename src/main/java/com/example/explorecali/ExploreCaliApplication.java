@@ -6,10 +6,14 @@ import com.example.explorecali.service.TourPackageService;
 import com.example.explorecali.service.TourService;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Info;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,6 +26,15 @@ public class ExploreCaliApplication implements CommandLineRunner {
         SpringApplication.run(ExploreCaliApplication.class, args);
     }
     private final String TOUR_IMPORT_FILE = "ExploreCalifornia.json";
+
+    @Bean
+    public OpenAPI swaggerHeader() {
+        return new OpenAPI()
+                .info((new Info())
+                        .description("Services for the Explore California Relational Database.")
+                        .title(StringUtils.substringBefore(getClass().getSimpleName(), "$"))
+                        .version("3.0.0"));
+    }
 
     @Autowired
     private TourPackageService tourPackageService;
@@ -37,9 +50,6 @@ public class ExploreCaliApplication implements CommandLineRunner {
         System.out.println("Persisted Tours = " + tourService.total());
     }
 
-    /**
-     * Initialize all the known tour packages
-     */
     private void createTourAllPackages() {
         tourPackageService.createTourPackage("BC", "Backpack Cal");
         tourPackageService.createTourPackage("CC", "California Calm");
@@ -52,9 +62,6 @@ public class ExploreCaliApplication implements CommandLineRunner {
         tourPackageService.createTourPackage("TC", "Taste of California");
     }
 
-    /**
-     * Create tour entities from an external file
-     */
     private void createToursFromFile(String fileToImport) throws IOException {
         TourFromFile.read(fileToImport).forEach(t ->
                 tourService.createTour(
@@ -72,9 +79,6 @@ public class ExploreCaliApplication implements CommandLineRunner {
         );
     }
 
-    /*
-     * Helper to import ExploreCali.json
-     */
     record TourFromFile(String packageName, String title, String description,
                         String blurb, Integer price, String length, String bullets,
                         String keywords, String difficulty, String region) {

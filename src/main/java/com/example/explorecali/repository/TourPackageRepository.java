@@ -9,6 +9,7 @@ import java.util.Optional;
 
 @Tag(name = "Tour Package", description = "Tour Package API")
 @RepositoryRestResource(path = "packages",collectionResourceRel ="packages" )
+@Tag(name = "Tour Package", description = "Tour Package API")
 public interface TourPackageRepository extends JpaRepository<TourPackage, String> {
 
     @io.swagger.v3.oas.annotations.Operation(summary = "Find tour package by name")
